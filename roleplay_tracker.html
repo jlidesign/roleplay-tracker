@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>AI Role-Play Adoption Tracker</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #fafaf9;
+    --surface: #ffffff;
+    --border: #e7e5e4;
+    --border-soft: #f5f5f4;
+    --text: #1c1917;
+    --text-muted: #78716c;
+    --text-faint: #a8a29e;
+    --text-very-faint: #c4bfba;
+    --indigo: #6366f1;
+    --indigo-light: #c7d2fe;
+    --indigo-bg: #e0e7ff;
+    --sky: #0ea5e9;
+    --green: #22c55e;
+    --green-bg: #dcfce7;
+    --green-border: #bbf7d0;
+    --amber: #f59e0b;
+    --red: #ef4444;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: 'Fraunces', Georgia, serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+  }
+  .container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 40px 24px 60px;
+  }
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    gap: 16px;
+    margin-bottom: 36px;
+  }
+  .eyebrow {
+    font-family: 'Inter', sans-serif;
+    font-size: 10px;
+    letter-spacing: 2.5px;
+    text-transform: uppercase;
+    color: var(--text-faint);
+    margin: 0 0 8px;
+    font-weight: 600;
+  }
+  h1 {
+    font-size: 26px;
+    font-weight: 700;
+    margin: 0;
+    line-height: 1.25;
+    max-width: 540px;
+    letter-spacing: -0.5px;
+  }
+  .subtitle {
+    font-size: 14px;
+    color: var(--text-muted);
+    margin: 8px 0 0;
+    font-style: italic;
+    max-width: 540px;
+  }
+  .status-block { text-align: right; }
+  .status-pill {
+    background: var(--green-bg);
+    color: #16a34a;
+    border: 1px solid var(--green-border);
+    border-radius: 6px;
+    padding: 4px 14px;
+    font-size: 12px;
+    font-weight: 700;
+    font-family: 'Inter', sans-serif;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .meta {
+    font-size: 11px;
+    color: var(--text-faint);
+    margin: 6px 0 0;
+    font-family: 'Inter', sans-serif;
+  }
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 22px 24px;
+  }
+  .kr-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 28px;
+  }
+  @media (max-width: 640px) {
+    .kr-grid { grid-template-columns: 1fr; }
+  }
+  .kr-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 4px;
+  }
+  .kr-label {
+    font-family: 'Inter', sans-serif;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--text-faint);
+    margin: 0;
+  }
+  .kr-description {
+    font-size: 12.5px;
+    color: var(--text-muted);
+    margin: 0 0 16px;
+    font-style: italic;
+  }
+  .kr-value-row {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    margin-bottom: 12px;
+  }
+  .kr-value {
+    font-size: 40px;
+    font-weight: 700;
+    line-height: 1;
+    letter-spacing: -1px;
+  }
+  .kr-value.indigo { color: var(--indigo); }
+  .kr-value.sky { color: var(--sky); }
+  .kr-target {
+    font-size: 13px;
+    color: var(--text-faint);
+    font-family: 'Inter', sans-serif;
+  }
+  .progress-track {
+    background: #f1f5f9;
+    border-radius: 99px;
+    height: 6px;
+    width: 100%;
+    overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%;
+    border-radius: 99px;
+    transition: width 0.8s cubic-bezier(.4,0,.2,1);
+  }
+  .progress-fill.indigo { background: var(--indigo); }
+  .progress-fill.sky { background: var(--sky); }
+  .kr-footer {
+    font-family: 'Inter', sans-serif;
+    font-size: 11px;
+    color: var(--text-faint);
+    margin: 8px 0 0;
+  }
+  .status-badge {
+    border-radius: 6px;
+    padding: 2px 10px;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.3px;
+    font-family: 'Inter', sans-serif;
+  }
+  .status-badge.exceeded {
+    background: rgba(34, 197, 94, 0.13);
+    color: var(--green);
+    border: 1px solid rgba(34, 197, 94, 0.27);
+  }
+  .status-badge.ontrack {
+    background: rgba(245, 158, 11, 0.13);
+    color: var(--amber);
+    border: 1px solid rgba(245, 158, 11, 0.27);
+  }
+  .status-badge.behind {
+    background: rgba(239, 68, 68, 0.13);
+    color: var(--red);
+    border: 1px solid rgba(239, 68, 68, 0.27);
+  }
+  .section-label {
+    font-family: 'Inter', sans-serif;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--text-faint);
+    margin: 0 0 18px;
+  }
+  .chart-section { margin-bottom: 28px; }
+  .chart {
+    display: flex;
+    align-items: flex-end;
+    gap: 14px;
+    height: 100px;
+  }
+  .chart-col {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+  }
+  .chart-value {
+    font-family: 'Inter', sans-serif;
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--text-muted);
+  }
+  .chart-value.latest { color: var(--indigo); font-weight: 700; }
+  .chart-value.baseline { color: var(--text-faint); }
+  .chart-value.target { color: var(--green); font-weight: 600; }
+  .chart-bar {
+    width: 100%;
+    border-radius: 4px 4px 0 0;
+    transition: height 0.5s ease;
+  }
+  .chart-bar.baseline { background: #e2e8f0; }
+  .chart-bar.middle { background: var(--indigo-light); }
+  .chart-bar.latest { background: var(--indigo); }
+  .chart-bar.target {
+    background: var(--green-bg);
+    border: 2px dashed var(--green);
+  }
+  .chart-label {
+    font-family: 'Inter', sans-serif;
+    font-size: 10px;
+    color: var(--text-faint);
+    text-align: center;
+    line-height: 1.3;
+  }
+  .chart-label.target { color: var(--green); }
+  .table-wrapper {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+    margin-bottom: 24px;
+  }
+  .table-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 22px;
+    border-bottom: 1px solid var(--border-soft);
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: 'Inter', sans-serif;
+    font-size: 13px;
+  }
+  th {
+    padding: 10px 16px;
+    text-align: left;
+    font-size: 10.5px;
+    font-weight: 600;
+    color: var(--text-faint);
+    letter-spacing: 0.6px;
+    text-transform: uppercase;
+    border-bottom: 1px solid var(--border-soft);
+  }
+  td {
+    padding: 14px 16px;
+    border-bottom: 1px solid var(--border-soft);
+  }
+  tr:last-child td { border-bottom: none; }
+  tr.latest { background: var(--bg); }
+  tr.latest td { font-weight: 600; }
+  td.baseline-cell { color: var(--text-faint); }
+  td.indigo-cell { color: var(--indigo); font-weight: 600; }
+  td.sky-cell { color: var(--sky); font-weight: 600; }
+  td.notes-cell { color: var(--text-muted); font-style: italic; font-size: 12px; }
+  .footer-meta {
+    font-family: 'Inter', sans-serif;
+    font-size: 11px;
+    color: var(--text-very-faint);
+    text-align: center;
+    font-style: italic;
+    margin: 24px 0 0;
+  }
+  .insights {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 22px 24px;
+    margin-bottom: 24px;
+  }
+  .insights h3 {
+    font-family: 'Inter', sans-serif;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--text-faint);
+    margin: 0 0 14px;
+  }
+  .insight-row {
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+    padding: 8px 0;
+    border-bottom: 1px solid var(--border-soft);
+  }
+  .insight-row:last-child { border-bottom: none; }
+  .insight-label {
+    font-family: 'Inter', sans-serif;
+    font-size: 13px;
+    color: var(--text-muted);
+    flex: 1;
+  }
+  .insight-value {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--text);
+  }
+  .insight-value .delta {
+    color: var(--green);
+    font-size: 12px;
+    margin-left: 6px;
+    font-family: 'Inter', sans-serif;
+    font-weight: 500;
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <div class="header">
+    <div>
+      <p class="eyebrow">FY27 Goal Tracker</p>
+      <h1>AI Role-Play Adoption &amp; Impact</h1>
+      <p class="subtitle">Increase adoption of AI Role-Play by improving onboarding and contextual workflow integration</p>
+    </div>
+    <div class="status-block">
+      <span class="status-pill">🟢 Green</span>
+      <p class="meta">Baseline: Jan 31, 2026 · Due: Jan 30, 2027</p>
+    </div>
+  </div>
+
+  <div class="kr-grid">
+    <div class="card">
+      <div class="kr-header">
+        <p class="kr-label">KR1 — Tenant Breadth</p>
+        <span class="status-badge exceeded">✓ Exceeded</span>
+      </div>
+      <p class="kr-description">% of Aura tenants (209) with ≥1 published role-play</p>
+      <div class="kr-value-row">
+        <span class="kr-value indigo">17.2%</span>
+        <span class="kr-target">/ 15% target</span>
+      </div>
+      <div class="progress-track"><div class="progress-fill indigo" style="width: 100%"></div></div>
+      <p class="kr-footer">Baseline: 4.3% · Target: 15% by Jan 2027</p>
+    </div>
+
+    <div class="card">
+      <div class="kr-header">
+        <p class="kr-label">KR2 — Creator Depth</p>
+        <span class="status-badge exceeded">✓ Exceeded</span>
+      </div>
+      <p class="kr-description">Avg published role-plays per active tenant (≥1 published)</p>
+      <div class="kr-value-row">
+        <span class="kr-value sky">4.4</span>
+        <span class="kr-target">/ 4.0 target</span>
+      </div>
+      <div class="progress-track"><div class="progress-fill sky" style="width: 100%"></div></div>
+      <p class="kr-footer">Baseline: 1.6 · Target: 4.0 by Jan 2027</p>
+    </div>
+  </div>
+
+  <div class="insights">
+    <h3>Growth Since Baseline (Jan 31 → May 21, 2026)</h3>
+    <div class="insight-row">
+      <span class="insight-label">Tenants with ≥1 published role-play</span>
+      <span class="insight-value">9 → 36 <span class="delta">+27 tenants · 4x growth</span></span>
+    </div>
+    <div class="insight-row">
+      <span class="insight-label">Avg published per active tenant</span>
+      <span class="insight-value">1.6 → 4.4 <span class="delta">+2.8 · 2.75x growth</span></span>
+    </div>
+    <div class="insight-row">
+      <span class="insight-label">Total published role-plays</span>
+      <span class="insight-value">14 → 159 <span class="delta">+145 role-plays</span></span>
+    </div>
+  </div>
+
+  <div class="card chart-section">
+    <p class="section-label">Tenant Breadth Over Time (% of 209 Aura tenants)</p>
+    <div class="chart">
+      <div class="chart-col">
+        <span class="chart-value baseline">4.3%</span>
+        <div class="chart-bar baseline" style="height: 9px;"></div>
+        <span class="chart-label">Jan 31 (baseline)</span>
+      </div>
+      <div class="chart-col">
+        <span class="chart-value">12.0%</span>
+        <div class="chart-bar middle" style="height: 24px;"></div>
+        <span class="chart-label">Apr 23, 2026</span>
+      </div>
+      <div class="chart-col">
+        <span class="chart-value latest">17.2%</span>
+        <div class="chart-bar latest" style="height: 34px;"></div>
+        <span class="chart-label">May 21, 2026</span>
+      </div>
+      <div class="chart-col">
+        <span class="chart-value target">15%</span>
+        <div class="chart-bar target" style="height: 30px;"></div>
+        <span class="chart-label target">Target</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="table-wrapper">
+    <div class="table-header">
+      <p class="section-label" style="margin: 0;">Snapshots</p>
+    </div>
+    <table>
+      <thead>
+        <tr>
+          <th>Date</th>
+          <th>Tenants (breadth)</th>
+          <th>% of 209</th>
+          <th>Avg depth</th>
+          <th>Total published</th>
+          <th>Notes</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="baseline-cell">Jan 31, 2026 (baseline)</td>
+          <td>9 / 209</td>
+          <td class="baseline-cell">4.3%</td>
+          <td class="baseline-cell">1.6</td>
+          <td>14</td>
+          <td class="notes-cell">FY26 year-end baseline — scripted role-play era</td>
+        </tr>
+        <tr>
+          <td>Apr 23, 2026</td>
+          <td>25 / 209</td>
+          <td class="indigo-cell">12.0%</td>
+          <td class="sky-cell">3.2</td>
+          <td>79</td>
+          <td class="notes-cell">~2 months post-launch</td>
+        </tr>
+        <tr class="latest">
+          <td>May 21, 2026</td>
+          <td>36 / 209</td>
+          <td class="indigo-cell">17.2%</td>
+          <td class="sky-cell">4.4</td>
+          <td>159</td>
+          <td class="notes-cell">Both KR targets met — consider revising upward</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <p class="footer-meta">
+    Denominator: 209 Aura tenants (opt-in via Kendall/Katherine) · Baseline: Jan 31, 2026 · Due: Jan 30, 2027 · Owner: Jodie Li
+  </p>
+
+</div>
+</body>
+</html>
