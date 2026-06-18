@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>AI Role-Play Adoption Tracker</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  /* Host reset */
+  *, *::before, *::after { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+
+  /* Mantle tokens */
+  :root {
+    /* Neutrals */
+    --mntl-color-white: #FFFFFF;
+    --mntl-color-pearl: #F3F4F6;
+    --mntl-color-silver: #CFD4DA;
+    --mntl-color-rhino: #868E96;
+    --mntl-color-smoke: #535B64;
+    --mntl-color-charcoal: #343A40;
+
+    /* Brand */
+    --mntl-color-primary: #0065FF;
+    --mntl-color-primary-hover: #0052CC;
+    --mntl-color-active-nav-bg: #D1E8FD;
+    --mntl-color-hover-fill: #ECEEF0;
+
+    /* Alerts */
+    --mntl-color-success: #008A1F;
+    --mntl-color-warning: #FFC107;
+    --mntl-color-error: #E71D32;
+    --mntl-color-info: #178AF7;
+
+    /* Alert background tints (allowed exception per preferences) */
+    --mntl-color-success-bg: #E6F4E9;
+    --mntl-color-info-bg: #E3F1FE;
+
+    /* Spacing — 8px base grid */
+    --mntl-spacing-1: 4px;
+    --mntl-spacing-2: 8px;
+    --mntl-spacing-3: 12px;
+    --mntl-spacing-4: 16px;
+    --mntl-spacing-5: 20px;
+    --mntl-spacing-6: 24px;
+    --mntl-spacing-8: 32px;
+    --mntl-spacing-10: 40px;
+    --mntl-spacing-12: 48px;
+
+    /* Radius */
+    --mntl-radius: 4px;
+
+    /* Typography */
+    --mntl-font-family: 'Source Sans 3', 'Source Sans Pro', -apple-system, BlinkMacSystemFont, sans-serif;
+    --mntl-font-size-body: 14px;
+    --mntl-font-size-card-title: 16px;
+    --mntl-font-size-section-title: 18px;
+    --mntl-font-size-small: 12px;
+    --mntl-font-size-tiny: 10px;
+    --mntl-font-size-display: 32px;
+
+    --mntl-font-weight-regular: 400;
+    --mntl-font-weight-semibold: 600;
+    --mntl-font-weight-bold: 700;
+
+    /* Borders */
+    --mntl-border-default: 1px solid var(--mntl-color-silver);
+  }
+
+  /* Body reset */
+  body {
+    font-family: var(--mntl-font-family);
+    background: var(--mntl-color-pearl);
+    color: var(--mntl-color-charcoal);
+    font-size: var(--mntl-font-size-body);
+    line-height: 1.5;
+    min-height: 100vh;
+  }
+
+  /* Layout */
+  .mntl-page {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: var(--mntl-spacing-10) var(--mntl-spacing-6);
+  }
+
+  .mntl-page-header {
+    margin-bottom: var(--mntl-spacing-8);
+  }
+
+  .mntl-eyebrow {
+    font-size: var(--mntl-font-size-small);
+    font-weight: var(--mntl-font-weight-semibold);
+    color: var(--mntl-color-smoke);
+    margin: 0 0 var(--mntl-spacing-2);
+    letter-spacing: 0.4px;
+  }
+
+  .mntl-page-title {
+    font-size: 28px;
+    font-weight: var(--mntl-font-weight-bold);
+    color: var(--mntl-color-charcoal);
+    margin: 0;
+    line-height: 1.2;
+    letter-spacing: -0.3px;
+  }
+
+  .mntl-page-subtitle {
+    font-size: var(--mntl-font-size-body);
+    color: var(--mntl-color-smoke);
+    margin: var(--mntl-spacing-2) 0 0;
+    max-width: 640px;
+    line-height: 1.5;
+  }
+
+  .mntl-page-meta {
+    font-size: var(--mntl-font-size-small);
+    color: var(--mntl-color-rhino);
+    margin: var(--mntl-spacing-4) 0 0;
+  }
+
+  /* Card */
+  .mntl-card {
+    background: var(--mntl-color-white);
+    border-radius: var(--mntl-radius);
+    border: var(--mntl-border-default);
+    padding: var(--mntl-spacing-4);
+  }
+
+  .mntl-card--padded {
+    padding: var(--mntl-spacing-5);
+  }
+
+  .mntl-card-title {
+    font-size: var(--mntl-font-size-card-title);
+    font-weight: var(--mntl-font-weight-semibold);
+    color: var(--mntl-color-charcoal);
+    margin: 0 0 var(--mntl-spacing-1);
+  }
+
+  .mntl-card-subtitle {
+    font-size: var(--mntl-font-size-small);
+    color: var(--mntl-color-smoke);
+    margin: 0 0 var(--mntl-spacing-4);
+  }
+
+  /* Section title */
+  .mntl-section-title {
+    font-size: var(--mntl-font-size-section-title);
+    font-weight: var(--mntl-font-weight-semibold);
+    color: var(--mntl-color-charcoal);
+    margin: 0 0 var(--mntl-spacing-4);
+  }
+
+  /* Metric grid */
+  .mntl-metric-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--mntl-spacing-4);
+    margin-bottom: var(--mntl-spacing-6);
+  }
+  @media (max-width: 720px) {
+    .mntl-metric-grid { grid-template-columns: 1fr; }
+  }
+
+  .mntl-metric-label {
+    font-size: var(--mntl-font-size-body);
+    font-weight: var(--mntl-font-weight-semibold);
+    color: var(--mntl-color-charcoal);
+    margin: 0 0 var(--mntl-spacing-1);
+  }
+
+  .mntl-metric-description {
+    font-size: var(--mntl-font-size-small);
+    color: var(--mntl-color-smoke);
+    margin: 0 0 var(--mntl-spacing-4);
+    line-height: 1.4;
+  }
+
+  .mntl-metric-value {
+    font-size: var(--mntl-font-size-display);
+    font-weight: var(--mntl-font-weight-bold);
+    color: var(--mntl-color-primary);
+    line-height: 1;
+    letter-spacing: -0.5px;
+    display: block;
+  }
+
+  .mntl-metric-footer {
+    font-size: var(--mntl-font-size-small);
+    color: var(--mntl-color-smoke);
+    margin: var(--mntl-spacing-3) 0 0;
+    padding-top: var(--mntl-spacing-3);
+    border-top: 1px solid var(--mntl-color-pearl);
+  }
+
+  .mntl-metric-footer strong {
+    color: var(--mntl-color-charcoal);
+    font-weight: var(--mntl-font-weight-semibold);
+  }
+
+  .mntl-tag-success {
+    display: inline-block;
+    background: var(--mntl-color-success-bg);
+    color: var(--mntl-color-success);
+    font-size: var(--mntl-font-size-small);
+    font-weight: var(--mntl-font-weight-semibold);
+    padding: 2px var(--mntl-spacing-2);
+    border-radius: var(--mntl-radius);
+    margin-left: var(--mntl-spacing-2);
+  }
+
+  /* Chart */
+  .mntl-chart-section { margin-bottom: var(--mntl-spacing-6); }
+
+  .mntl-chart {
+    display: flex;
+    align-items: flex-end;
+    gap: var(--mntl-spacing-3);
+    height: 140px;
+    padding: var(--mntl-spacing-2) 0 0;
+  }
+
+  .mntl-chart-col {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--mntl-spacing-2);
+  }
+
+  .mntl-chart-value {
+    font-size: var(--mntl-font-size-body);
+    font-weight: var(--mntl-font-weight-semibold);
+    color: var(--mntl-color-smoke);
+  }
+
+  .mntl-chart-value--latest {
+    color: var(--mntl-color-primary);
+    font-weight: var(--mntl-font-weight-bold);
+  }
+
+  .mntl-chart-value--baseline { color: var(--mntl-color-rhino); }
+
+  .mntl-chart-bar {
+    width: 100%;
+    border-radius: var(--mntl-radius) var(--mntl-radius) 0 0;
+    transition: height 0.5s ease;
+  }
+
+  .mntl-chart-bar--baseline { background: var(--mntl-color-silver); }
+  .mntl-chart-bar--middle { background: var(--mntl-color-active-nav-bg); }
+  .mntl-chart-bar--latest { background: var(--mntl-color-primary); }
+
+  .mntl-chart-label {
+    font-size: var(--mntl-font-size-small);
+    color: var(--mntl-color-smoke);
+    text-align: center;
+    line-height: 1.3;
+  }
+
+  /* Tenant chips */
+  .mntl-chip-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--mntl-spacing-2);
+  }
+
+  .mntl-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--mntl-spacing-1);
+    font-size: var(--mntl-font-size-small);
+    font-weight: var(--mntl-font-weight-semibold);
+    background: var(--mntl-color-pearl);
+    color: var(--mntl-color-charcoal);
+    padding: var(--mntl-spacing-1) var(--mntl-spacing-2);
+    border-radius: var(--mntl-radius);
+  }
+
+  .mntl-chip-count {
+    color: var(--mntl-color-primary);
+    font-weight: var(--mntl-font-weight-bold);
+  }
+
+  /* Table */
+  .mntl-table-wrapper {
+    background: var(--mntl-color-white);
+    border-radius: var(--mntl-radius);
+    border: var(--mntl-border-default);
+    overflow: hidden;
+    margin-bottom: var(--mntl-spacing-6);
+  }
+
+  .mntl-table-header {
+    padding: var(--mntl-spacing-4);
+    border-bottom: 1px solid var(--mntl-color-pearl);
+  }
+
+  .mntl-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: var(--mntl-font-size-body);
+  }
+
+  .mntl-table th {
+    padding: var(--mntl-spacing-3) var(--mntl-spacing-4);
+    text-align: left;
+    font-size: var(--mntl-font-size-small);
+    font-weight: var(--mntl-font-weight-semibold);
+    color: var(--mntl-color-smoke);
+    background: var(--mntl-color-pearl);
+    border-bottom: 1px solid var(--mntl-color-silver);
+  }
+
+  .mntl-table td {
+    padding: var(--mntl-spacing-4);
+    border-bottom: 1px solid var(--mntl-color-pearl);
+    color: var(--mntl-color-charcoal);
+  }
+
+  .mntl-table tr:last-child td { border-bottom: none; }
+
+  .mntl-table tr.mntl-row-latest { background: var(--mntl-color-pearl); }
+  .mntl-table tr.mntl-row-latest td { font-weight: var(--mntl-font-weight-semibold); }
+
+  .mntl-cell-baseline { color: var(--mntl-color-rhino); }
+  .mntl-cell-primary { color: var(--mntl-color-primary); font-weight: var(--mntl-font-weight-semibold); }
+  .mntl-cell-notes { color: var(--mntl-color-smoke); font-size: var(--mntl-font-size-small); }
+
+  /* Footer */
+  .mntl-footer {
+    font-size: var(--mntl-font-size-small);
+    color: var(--mntl-color-rhino);
+    text-align: center;
+    margin: var(--mntl-spacing-8) 0 0;
+  }
+
+  .mntl-link {
+    color: var(--mntl-color-primary);
+    text-decoration: none;
+    font-weight: var(--mntl-font-weight-semibold);
+  }
+
+  .mntl-link:hover {
+    color: var(--mntl-color-primary-hover);
+    text-decoration: underline;
+  }
+</style>
+</head>
+<body>
+<main class="mntl-page" role="main">
+
+  <header class="mntl-page-header">
+    <p class="mntl-eyebrow">Adoption snapshot</p>
+    <h1 class="mntl-page-title">AI Role-Play adoption</h1>
+    <p class="mntl-page-subtitle">Tracking how tenants are creating, publishing, and engaging with the new adaptive Role-Play experience since launch in February 2026.</p>
+    <p class="mntl-page-meta">Updated June 18, 2026 · Baseline: Jan 31, 2026</p>
+  </header>
+
+  <section class="mntl-metric-grid" aria-label="Key adoption metrics">
+    <article class="mntl-card mntl-card--padded">
+      <p class="mntl-metric-label">Active tenants</p>
+      <p class="mntl-metric-description">Tenants with at least one published role-play</p>
+      <span class="mntl-metric-value" aria-label="50 active tenants">50</span>
+      <p class="mntl-metric-footer">From <strong>9 at baseline</strong> <span class="mntl-tag-success">5.6× growth</span></p>
+    </article>
+
+    <article class="mntl-card mntl-card--padded">
+      <p class="mntl-metric-label">Avg published per tenant</p>
+      <p class="mntl-metric-description">Mean published role-plays among active tenants</p>
+      <span class="mntl-metric-value" aria-label="4.5 average">4.5</span>
+      <p class="mntl-metric-footer">From <strong>1.6 at baseline</strong> <span class="mntl-tag-success">2.8× growth</span></p>
+    </article>
+
+    <article class="mntl-card mntl-card--padded">
+      <p class="mntl-metric-label">Total published</p>
+      <p class="mntl-metric-description">Cumulative role-plays published across all tenants</p>
+      <span class="mntl-metric-value" aria-label="238 total published">238</span>
+      <p class="mntl-metric-footer">From <strong>14 at baseline</strong> <span class="mntl-tag-success">17× growth</span></p>
+    </article>
+  </section>
+
+  <section class="mntl-card mntl-card--padded mntl-chart-section" aria-label="Active tenants over time">
+    <h2 class="mntl-section-title">Active tenants over time</h2>
+    <div class="mntl-chart" role="img" aria-label="Active tenant growth from 9 at baseline to 50 in June 2026">
+      <div class="mntl-chart-col">
+        <span class="mntl-chart-value mntl-chart-value--baseline">9</span>
+        <div class="mntl-chart-bar mntl-chart-bar--baseline" style="height: 22px;" aria-hidden="true"></div>
+        <span class="mntl-chart-label">Jan 31<br/>(baseline)</span>
+      </div>
+      <div class="mntl-chart-col">
+        <span class="mntl-chart-value">25</span>
+        <div class="mntl-chart-bar mntl-chart-bar--middle" style="height: 61px;" aria-hidden="true"></div>
+        <span class="mntl-chart-label">Apr 23</span>
+      </div>
+      <div class="mntl-chart-col">
+        <span class="mntl-chart-value">36</span>
+        <div class="mntl-chart-bar mntl-chart-bar--middle" style="height: 88px;" aria-hidden="true"></div>
+        <span class="mntl-chart-label">May 21</span>
+      </div>
+      <div class="mntl-chart-col">
+        <span class="mntl-chart-value mntl-chart-value--latest">50</span>
+        <div class="mntl-chart-bar mntl-chart-bar--latest" style="height: 122px;" aria-hidden="true"></div>
+        <span class="mntl-chart-label">Jun 18</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="mntl-table-wrapper" aria-label="Snapshots over time">
+    <div class="mntl-table-header">
+      <h2 class="mntl-section-title" style="margin: 0;">Snapshots over time</h2>
+    </div>
+    <table class="mntl-table">
+      <thead>
+        <tr>
+          <th scope="col">Date</th>
+          <th scope="col">Active tenants</th>
+          <th scope="col">Avg published per tenant</th>
+          <th scope="col">Total published</th>
+          <th scope="col">Notes</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="mntl-cell-baseline">Jan 31, 2026 (baseline)</td>
+          <td class="mntl-cell-baseline">9</td>
+          <td class="mntl-cell-baseline">1.6</td>
+          <td class="mntl-cell-baseline">14</td>
+          <td class="mntl-cell-notes">Pre-launch — scripted role-play era</td>
+        </tr>
+        <tr>
+          <td>Apr 23, 2026</td>
+          <td class="mntl-cell-primary">25</td>
+          <td class="mntl-cell-primary">3.2</td>
+          <td>79</td>
+          <td class="mntl-cell-notes">~2 months post-launch</td>
+        </tr>
+        <tr>
+          <td>May 21, 2026</td>
+          <td class="mntl-cell-primary">36</td>
+          <td class="mntl-cell-primary">4.4</td>
+          <td>159</td>
+          <td class="mntl-cell-notes">~3 months post-launch</td>
+        </tr>
+        <tr class="mntl-row-latest">
+          <td>Jun 18, 2026</td>
+          <td class="mntl-cell-primary">50</td>
+          <td class="mntl-cell-primary">4.5</td>
+          <td>238</td>
+          <td class="mntl-cell-notes">~4 months post-launch — 14 new active tenants since May</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <footer class="mntl-footer">
+    <p style="margin: 0 0 var(--mntl-spacing-2);">Updated monthly</p>
+    <p style="margin: 0;">
+      Sources:
+      <a href="https://seismic.sisense.com/app/main/dashboards/69bacf3b1b5e8100347d227d" target="_blank" rel="noopener" class="mntl-link">Sisense dashboard</a>
+      ·
+      <a href="https://app.snowflake.com/seismic/seismiccorporate/#/streamlit-apps/PRODUCT_ENGINEERING.PUBLIC.JSL73QPWWTNSSS7N" target="_blank" rel="noopener" class="mntl-link">Snowflake app</a>
+    </p>
+  </footer>
+
+</main>
+</body>
+</html>
